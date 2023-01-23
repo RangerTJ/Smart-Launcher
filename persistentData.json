@@ -4,5 +4,9 @@
     "baby": "images\\baby.png",
     "alf": "images\\alf.png",
     "Mario": "images\\default.png",
-    "Luigi": "images\\default.png"
+    "Luigi": "images\\default.png",
+    "fishy": "images\\default.png",
+    "fish": "images\\default.png",
+    "tank": "images\\default.png",
+    "pony": "images\\default.png"
 }

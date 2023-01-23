@@ -24,7 +24,7 @@ class WordImageTool:
     def get_dict(self):
         return self._word_dict
 
-    def main_loop(self):
+    def main_menu(self):
         """
         Triggered upon first starting the program or any time the user selects an option to return to the main menu.
         No parameters. Returns nothing when quitting, otherwise triggers different operational loop paths.
@@ -48,14 +48,14 @@ class WordImageTool:
 
         # Handle user decisions
         if mode == "1":
-            self.manual_loop()
+            self.manual_menu()
         elif mode == "2":
-            self.request_loop()
+            self.request_menu()
         elif mode == "3":
-            self.settings_loop()
+            self.settings_menu()
         elif mode.lower() == "help":
             help_me(0)
-            self.main_loop()
+            self.main_menu()
 
         # Save changes to word-image dictionary and exit
         else:
@@ -65,7 +65,7 @@ class WordImageTool:
             return
 
     # Primary Functional Loops
-    def manual_loop(self):
+    def manual_menu(self):
         """"""
 
         choice = input("\nString to Image converter: CONVERT A STRING\n"
@@ -82,18 +82,18 @@ class WordImageTool:
             my_string = input("\nType in your new string now. Hit 'Enter' when you are done to submit it.\n"
                               "You will then be presented with the available image that best corresponds.\n")
             self.string_to_image_display(my_string)
-            self.manual_loop()
+            self.manual_menu()
 
         # Ask for help
         elif choice.lower() == "help":
             help_me(1)
-            self.manual_loop()
+            self.manual_menu()
 
         # Return to main menu
         else:
-            self.main_loop()
+            self.main_menu()
 
-    def request_loop(self):
+    def request_menu(self):
         """
         Processes the most recent request pipeline and ensures that the response pipeline data matches
         the results that were requested.
@@ -130,18 +130,18 @@ class WordImageTool:
             self.process_request()
 
             # Return to main menu
-            self.request_loop()
+            self.request_menu()
 
         # Ask for help
         elif choice.lower() == "help":
             help_me(2)
-            self.request_loop()
+            self.request_menu()
 
         # Return to main menu
         else:
-            self.main_loop()
+            self.main_menu()
 
-    def settings_loop(self):
+    def settings_menu(self):
         """"""
 
         # TODO: Can pretty much gut this entire thing if I use the automated version like in requests, since
@@ -163,13 +163,13 @@ class WordImageTool:
         if choice == "1":
             self.assignment_ui()
             self.list_words()
-            self.settings_loop()
+            self.settings_menu()
 
         # Auto-update dict keys for all existing words
         elif choice == "2":
             self.assign_words_all()
             self.list_words()
-            self.settings_loop()
+            self.settings_menu()
 
         # Delete a specific word from the gallery dictionary
         elif choice == "3":
@@ -178,21 +178,21 @@ class WordImageTool:
                              ">>>")
             self.del_word(del_word)
             self.list_words()
-            self.settings_loop()
+            self.settings_menu()
 
         # Print Dictionary Summary
         elif choice == "4":
             self.list_words()
-            self.settings_loop()
+            self.settings_menu()
 
         # Ask for help
         elif choice.lower() == "help":
             help_me(3)
-            self.settings_loop()
+            self.settings_menu()
 
         # Return to main menu
         else:
-            self.main_loop()
+            self.main_menu()
 
     # Helper Methods
     def string_to_image_display(self, arg_string):
@@ -251,7 +251,6 @@ class WordImageTool:
             self.assignment_ui()
         else:
             self.assign_word(word_choice)
-            self.settings_loop()
 
     def assign_word(self, word):
         """
@@ -531,13 +530,13 @@ with(open("persistentData.json", "r")) as word_image_json:
     word_images.set_dict(temp_dict)
 
 # Run the main program loop
-word_images.main_loop()
+word_images.main_menu()
 
 # Save changes to dictionary from this session (so they persist to the next)
 print("Exiting the program...")
 time.sleep(0.5)
-print("Saving word-image dictionary changes...")
-updated_dict_json = json.dumps(word_images.get_dict())
+print("Saving word-image dictionary changes to disk drive...")
+updated_dict_json = json.dumps(word_images.get_dict(), indent=4)
 with open("persistentData.json", "w") as word_image_dict:
     word_image_dict.write(updated_dict_json)
 time.sleep(1)
