@@ -1,0 +1,33 @@
+{
+    "strings": [
+        "Pizza eating!",
+        "Applesauce is cool",
+        "Eat your veggies!",
+        "Fat dogs eat candy!",
+        "Rubber Baby Buggy Bumpers.",
+        "Alf is back, in pog form!",
+        "Nachos.",
+        "Everybody run!",
+        "Alf is a fat cry baby, and everybody knows it!",
+        "Brushed teeth",
+        "Packed lunch",
+        "Used potty",
+        "Tied shoes",
+        "Ran away from a rabid sasquatch",
+	    "Went to school"
+    ],
+    "images": [
+        "pizza.png",
+        "apple.png",
+        "carrot-veggies.png",
+        "fat-dog.png",
+        "crying-baby.png",
+        "everybody-loves-alf.png",
+        "shoes-tied.jpg",
+        "toothbrush-brush-teeth.png",
+        "lunchbox.png",
+        "potty.png",
+        "run-ran-sprint-jog-exercise.png",
+	    "schoolhouse.png"
+    ]
+}
