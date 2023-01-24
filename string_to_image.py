@@ -616,7 +616,7 @@ time.sleep(1)
 # RANDOMIZATION CONCEPT: Could theoretically key words to a list instead of a image path string, which would allow for
 #                        selection of an image inside the list (random or otherwise) - would need to re-write most logic
 # Future GUI stuff: Use form interface and access python functions on back end somehow?
-# Actually write help content.
+# Have web JS call hosted python script
 
 # Microservice Interactions
 # -------------------------
