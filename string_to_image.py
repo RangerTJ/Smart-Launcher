@@ -497,17 +497,66 @@ def check_request_pipeline(pipe_path):
 
 def help_me(chapter: int):
     """Prints sections of help code that vary depending on where the help request came from."""
-    intro = "Intro Tutorial: Placeholder helpful paragraph about bla bla bla bla bla bla bla..."
-    manual = "Tutorial on manual strings"
-    request = "Tutorial on requests handling"
-    settings = "Tutorial on adjusting settings"
+
+    intro = "\nHELP: How this Program Works\n" \
+            "----------------------------\n" \
+            "Welcome! This program lets you affiliate a string with an image file. To navigate through\n" \
+            "this program, simply input the number in the console that matches your choice. Think of these as\n" \
+            "console 'buttons'. At any menu, to return to a previous menu (or exit at the main menu), simply\n" \
+            "input any value that does not correspond to a menu option and hit 'enter'. Simply hitting 'enter'\n" \
+            "with no value entered works too! It is also probably the fastest method of navigational backtracking.\n" \
+            "A local user can enter a string in the console and your device will display the image file that best\n" \
+            "fits your prompt (Main Menu option '1'). You can also manually respond to a microservice request,\n" \
+            "where a request pipeline with a list of images available and a list of strings that need to be\n" \
+            "assigned to them exist. The program then assigns each string a matching image and returns their\n" \
+            "relation as a dictionary in a response pipeline, for use by another program (Main Menu option '2').\n" \
+            "If you would like to further refine word-image associations for local user string inputs, you can\n" \
+            "go to the settings area (Main Menu option '3') and can add or remove key words used in string-image\n" \
+            "assignment. For more detailed help on these specific tasks, use 'HELP' in any other section, as needed."
+
+    manual = "\nHELP: How to See my Text String's Image\n" \
+             "---------------------------------------\n" \
+             "From this menu, simply input '1' to start the process. You will be asked to enter a string of text.\n" \
+             "Once you are done, you just hit 'enter and your device should load up your standard image-viewing\n" \
+             "program and display the image that best fits your string! If it did not match anything specific,\n" \
+             "a default image will be displayed. If you think the image is not a close enough match, you can expand\n" \
+             "the possible matching images by adding additional image files to the '\images' subdirectory of this\n" \
+             "program and using the settings menu (option '3' from Main Menu) to add additional key words that you\n" \
+             "would like the program to pick up on and associate with one of the images in the image folder."
+
+    request = "\nHELP: Respond to a Microservice Request\n" \
+              "---------------------------------------\n" \
+              "From this menu, simply input '1' to initiate the response to the most recent microservice request.\n" \
+              "A request pipeline JSON file will then be read (containing a dictionary with 'images' associated\n" \
+              "with a list of image file names/paths that a requesting service has available and 'strings' that\n" \
+              "are associated with a list of strings that the requestor would like to be assigned to a relevant \n" \
+              "image. Using these two data points, the program then determines what strings should be associated\n" \
+              "with what images and updates a response JSON file that can be accessed by the requesting service.\n" \
+              "The response JSON contains a dictionary of the requested strings (as keys) with their matching\n" \
+              "image filename or path as their value. That way it is easy for a service to use the response to\n" \
+              "index directly to the images associated with the strings they have available locally.\n" \
+              "All of this is self-contained and is not influenced by this program's key word database."
+
+    settings = "\nHELP: Adjusting Settings\n" \
+               "------------------------\n" \
+               "The settings menu has several options to further customize and influence the underlying programming\n" \
+               "of this application. Option '1' lets you enter a new word to be used as a reference point to\n" \
+               "search for matching images for a string. If the keyword already exists, it simply refreshes it\n" \
+               "by searching through the images available and assigning it the one that is most appropriate." \
+               "Option '2' works similarly, but refreshes all existing keywords in the entire underlying dictionary\n" \
+               "that is used to associate a specific word (or part of a word) with a particular image. Option '3'\n" \
+               "is for when you want to remove a word from this dictionary so that it is no longer used as a\n" \
+               "reference point for assigning an image to a string. If you accidentally add or delete keywords\n" \
+               "you can fix it in this menu by simply using options '1' (add) or '3' (remove) respectively.\n" \
+               "Underlying relational assignments remain the same once the word is in the dictionary, so removing\n" \
+               "a word and then adding it back (and vice versa) will not impact results. Option '4' is for when you\n" \
+               "do not necessarily want to change anything, but it lets you view what word-image relations exist\n" \
+               "under-the-hood. This same summary also displays where appropriate when using options 1, 2, or 3\n" \
+               "as appropriate to help give context to actions being taken."
 
     # Print out help relevant to current section
     if chapter == 0:
         print(intro)
-        print(manual)
-        print(request)
-        print(settings)
     elif chapter == 1:
         print(manual)
     elif chapter == 2:
@@ -564,6 +613,10 @@ time.sleep(1)
 # (OPTIONAL) Expand word checks to repeat again in opposite order if no match found on first pass
 # for cases when a word may fit into another one way, but not the other. Could do for images to if period and
 # everything after was sliced off, theoretically (less false negative connections)
+# RANDOMIZATION CONCEPT: Could theoretically key words to a list instead of a image path string, which would allow for
+#                        selection of an image inside the list (random or otherwise) - would need to re-write most logic
+# Future GUI stuff: Use form interface and access python functions on back end somehow?
+# Actually write help content.
 
 # Microservice Interactions
 # -------------------------
