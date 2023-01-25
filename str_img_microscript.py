@@ -69,7 +69,8 @@ def process_request(request_obj):
     # See if any words within the string are contained with an image filename and assign them if they are.
     else:
         # Filter out common irrelevant/short words and associate words/strings
-        skip_list = ("is", "in", "an", "the")
+        skip_list = ("is", "in", "an", "the", "a", "I")
+        # Need to append list of all stand-alone alpha characters
         string_list = request_obj.get_strings()
         for req_string in string_list:
             string_words = req_string.split()
@@ -95,7 +96,7 @@ def send_info(request_obj):
     # open and write self.request's object or its dictionary attribute
     send_data = request_obj.get_string_image_dict()
     send_data_json = json.dumps(send_data, indent=4)
-    with open("response.json", "w") as reply_pipe:
+    with open("test_response.json", "w") as reply_pipe:
         reply_pipe.write(send_data_json)
 
 
@@ -122,14 +123,39 @@ def check_request_pipeline(pipe_path):
     return json.loads(requests)
 
 
-# MICROSERVICE OPERATION
+# MICROSERVICE OPERATION - Auto-process method
+while True:
+    with(open("test_request.json", "r")) as request_json:
+        request_dict = json.load(request_json)
+        if request_dict:
+            print("Valid request found!")
+            assignment_request_obj = AssignmentRequest()
+            assignment_request_obj.set_images(request_dict["images"])
+            assignment_request_obj.set_strings(request_dict["strings"])
+            process_request(assignment_request_obj)
+            print("Response sent")
 
-# Read the request pipeline and create a temporary request object for it
-assignment_request_obj = AssignmentRequest()
-with(open("request.json", "r")) as request_json:
-    request_dict = json.load(request_json)
-    assignment_request_obj.set_images(request_dict["images"])
-    assignment_request_obj.set_strings(request_dict["strings"])
+            # Clear request after processed
+            with(open("test_request.json", "w")) as reset_json:
+                reset_json.write("{}")
+            print("Request pipeline reset")
 
-# Process the request and update the response pipeline
-process_request(assignment_request_obj)
+
+
+
+
+# Manual process mehod
+# # Read the request pipeline and create a temporary request object for it
+# assignment_request_obj = AssignmentRequest()
+# with(open("test_request.json", "r")) as request_json:
+#     request_dict = json.load(request_json)
+#     assignment_request_obj.set_images(request_dict["images"])
+#     assignment_request_obj.set_strings(request_dict["strings"])
+#
+# # Process the request and update the response pipeline
+# process_request(assignment_request_obj)
+
+
+# Need to further refine skip list for 1-3 letter common stand-alone filler words
+# May adjust opening and read/writing JSON to sockets... or something better?
+# Using JSON format means that request/reply data structures should be consistent though, regardless of how it's called

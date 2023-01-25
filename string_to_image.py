@@ -9,6 +9,7 @@ import os
 import time
 import json
 import string
+import str_img_microscript as micro
 
 
 class WordImageTool:
@@ -221,6 +222,19 @@ class WordImageTool:
         time.sleep(1)
         os.startfile(self._word_dict['sys_default'])
 
+
+        # Add as new function - user can choose microservice option (default) or use the original word dictionary method
+        # Add import/add to wordlist function
+        # Alternate Option:
+        # Create request
+            # list of one string
+            # all images in directory
+        # Call microservice
+        # Read response
+        # Startfile for matching response
+            # open file using argument string key -> filepath value
+
+
     def word_to_image_request(self, word) -> str:
         """
         Associates a word with an image
@@ -344,7 +358,8 @@ class WordImageTool:
         # See if any words within the string are contained with an image filename and assign them if they are.
         else:
             # Filter out common irrelevant/short words
-            skip_list = ("is", "in", "an", "the")
+            skip_list = ("is", "in", "an", "the", "a", "I")
+            # Need to append list of all stand-alone alpha characters
             string_list = self._request.get_strings()
             for req_string in string_list:
                 string_words = req_string.split()
@@ -617,6 +632,8 @@ time.sleep(1)
 #                        selection of an image inside the list (random or otherwise) - would need to re-write most logic
 # Future GUI stuff: Use form interface and access python functions on back end somehow?
 # Have web JS call hosted python script
+# Just import microservice and then call it from the manual request, rather than all the convoluted stuff with word
+# dictionaries. Just need to make the skip list more robust.
 
 # Microservice Interactions
 # -------------------------
