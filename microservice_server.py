@@ -93,8 +93,7 @@ def send_info(request_obj):
     """
     # open and write self.request's object or its dictionary attribute
     send_data = request_obj.get_string_image_dict()
-    reply = json.dumps(send_data)
-    socket.send_string(reply)
+    socket.send_json(send_data)
 
 
 # Adapted from explanation of strings module located here:
@@ -119,11 +118,18 @@ while True:
     request_dict = json.loads(request_str)
     print("Received Request JSON...")
 
-    # Create an object for the request
-    assignment_request_obj = AssignmentRequest()
-    assignment_request_obj.set_images(request_dict["images"])
-    assignment_request_obj.set_strings(request_dict["strings"])
+    # Error handling - if not both a strings and images key, reply with an error message
+    if "strings" not in request_dict or "images" not in request_dict:
+        print("Error: Request contained improper structure. Sending error message.")
+        socket.send_string("format_error")
+        print("Format error reply sent.")
 
-    # Process the request object and send appropriate reply
-    process_request(assignment_request_obj)
-    print("Reply sent.")
+    else:
+        # Create an object for the request
+        assignment_request_obj = AssignmentRequest()
+        assignment_request_obj.set_images(request_dict["images"])
+        assignment_request_obj.set_strings(request_dict["strings"])
+
+        # Process the request object and send appropriate reply
+        process_request(assignment_request_obj)
+        print("Reply sent.")
