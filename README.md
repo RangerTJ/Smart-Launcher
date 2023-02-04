@@ -29,4 +29,8 @@ The JSON object sent by the requesting client should be the JSON-encoded form of
 
 Once the microservice has assigned images into a string:image dictionary, it will encode the dictionary to a JSON object and send it back to the requesting client. This JSON object will need to be decoded back into its non-byte form using the JSON decoding methods available to whatever respective programming language is used by the client. An example of what to expect from a decoded JSON (continuing the above example) would be: {"Pizza eating!": "pizza.png", "Eat your veggies!": "carrot-veggies.png"}  
 
-Once the client-side program stores the results dictionary, this allows the client to directly index into matching image files using a string as a key. For example, this might allow a client to auto-generate an image to match an accompanying line of text, based on appropriate images that are already available in the client's file database.
+Once the client-side program stores the results dictionary, this allows the client to directly index into matching image files using a string as a key. For example, this might allow a client to auto-generate an image to match an accompanying line of text, based on appropriate images that are already available in the client's file database.  
+
+Note: If you would only like a single string to be associated, use the service like normal and just submit a JSON where the "strings" key's array only contains the string that you would like to be associated. (Exmaple: You have a user input a line, and as soon as their input is saved, this service is used to fetch a matching image).  
+
+If a request is invalid, the string "format_error" will be sent back instead of an assignment dictionary, so it may be helpful to incorpoate that into client-side program logic in the case that an invalid request is somehow sent (to avoid throwing exceptions and such).
