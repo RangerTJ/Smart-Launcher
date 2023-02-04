@@ -33,4 +33,7 @@ Once the client-side program stores the results dictionary, this allows the clie
 
 Note: If you would only like a single string to be associated, use the service like normal and just submit a JSON where the "strings" key's array only contains the string that you would like to be associated. (Exmaple: You have a user input a line, and as soon as their input is saved, this service is used to fetch a matching image).  
 
-If a request is invalid, the string "format_error" will be sent back instead of an assignment dictionary, so it may be helpful to incorpoate that into client-side program logic in the case that an invalid request is somehow sent (to avoid throwing exceptions and such).
+If a request is invalid, the string "format_error" will be sent back instead of an assignment dictionary, so it may be helpful to incorpoate that into client-side program logic in the case that an invalid request is somehow sent (to avoid throwing exceptions and such).  
+
+Example python code for a client request to the Microservice:
+![ExampleCall](https://user-images.githubusercontent.com/87739732/216794196-e5b1e24e-2289-44cc-9c0d-0aa9d8c78dcb.JPG)
