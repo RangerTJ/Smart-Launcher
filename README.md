@@ -39,4 +39,4 @@ If a request is invalid, the string "format_error" will be sent back instead of 
 ![ExampleCall](https://user-images.githubusercontent.com/87739732/216794236-69f83c1f-e7cb-4ce2-9a20-79996fc95b85.JPG)  
 
 **Diagram of Client-Microservice Interaction**
-![microUML1](https://user-images.githubusercontent.com/87739732/216794813-fcb33be0-d625-4ff6-b0ea-709a5a63ab32.JPG)
+![microUMLbetter](https://user-images.githubusercontent.com/87739732/216795635-340bdb1c-6206-4022-b81e-e18e1acb9144.JPG)
