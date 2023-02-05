@@ -9,6 +9,7 @@ import os
 import time
 import json
 import string
+import re
 import str_img_microscript as micro
 
 
@@ -508,6 +509,52 @@ def check_request_pipeline(pipe_path):
 
     # Return requested pipe data after loading it from JSON
     return json.loads(requests)
+
+
+def keywords_from_files():
+    """Scans the local image directory and returns the list of words found within file names within it."""
+
+    # Get images from library
+    file_list = []
+    images = os.listdir(path='images')
+    for image in images:
+        file_list.append(image)
+
+    # Parse image file names and add word substrings to a word list
+    word_list = []
+    for image in file_list:
+        file_string = image
+        if "." in image:
+            file_string = image[:-4]
+
+        # Split apart all the words in
+        split_words = re.split('[_\-,.]+', file_string)
+
+        # Check for new words from split and add to word list
+        for word in split_words:
+            if word not in word_list:
+                word_list.append(word)
+
+    # Return the word list
+    return word_list
+
+
+def surprise_me():
+    """
+    Generates a list of words in images in local library. Sends word list via socket JSON to a
+    microservice that will return a relevant word or phrase. An image is displayed based on the phrase
+    returned from the microservice.
+    """
+
+    # Generate word list
+    word_list = keywords_from_files()
+
+    # Send request to partner microservice
+
+    # Decode reply socket (and close it)
+
+    # Open image based on reply (using MY microservice or built-ins)
+    pass
 
 
 def help_me(chapter: int):

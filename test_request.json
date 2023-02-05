@@ -1,1 +1,14 @@
-{}
+{
+    "strings": [
+        "I like alf.",
+        "You have a dog.",
+        "What's up?",
+        "You have a baby."
+    ],
+    "images": [
+        "alf.png",
+        "baby.png",
+        "default.png",
+        "dog.png"
+    ]
+}
