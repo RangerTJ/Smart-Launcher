@@ -10,7 +10,7 @@ import time
 import json
 import string
 import re
-import str_img_microscript as micro
+# import str_img_microscript as micro  # For possible streamlining later
 
 
 class WordImageTool:
@@ -359,14 +359,14 @@ class WordImageTool:
         # See if any words within the string are contained with an image filename and assign them if they are.
         else:
             # Filter out common irrelevant/short words
-            skip_list = ("is", "in", "an", "the", "a", "I")
+            skip_list = ("the", "and", "but", "for")
             # Need to append list of all stand-alone alpha characters
             string_list = self._request.get_strings()
             for req_string in string_list:
                 string_words = req_string.split()
                 for word in string_words:
                     cleaned_word = remove_special_chars(word)
-                    if cleaned_word in skip_list:
+                    if cleaned_word in skip_list or len(cleaned_word) < 3:
                         continue  # Skip this substring if it's a known irrelevant factor
                     word_image = self._request.image_for_word(cleaned_word)
                     self._request.update_string_image_dict(req_string, word_image)
@@ -533,7 +533,8 @@ def keywords_from_files():
         # Check for new words from split and add to word list
         for word in split_words:
             if word not in word_list:
-                word_list.append(word)
+                if len(word) > 2:
+                    word_list.append(word)
 
     # Return the word list
     return word_list

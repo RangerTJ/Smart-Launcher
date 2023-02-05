@@ -67,14 +67,15 @@ def process_request(request_obj):
     # See if any words within the string are contained with an image filename and assign them if they are.
     else:
         # Filter out common irrelevant/short words and associated words/strings
-        skip_list = ("is", "in", "an", "the", "a", "I", "or", "and", "but", "on", "o", "o'", )
+        skip_list = ("the", "and", "but", "for")
         # Need to append list of all stand-alone alpha characters? (function to append all single ascii chars?)
         string_list = request_obj.get_strings()
         for req_string in string_list:
             string_words = req_string.split()
             for word in string_words:
                 cleaned_word = remove_special_chars(word)
-                if cleaned_word in skip_list:
+                print(cleaned_word)
+                if cleaned_word in skip_list or len(cleaned_word) < 3:
                     continue  # Skip this substring if it's a known irrelevant factor
                 word_image = request_obj.image_for_word(cleaned_word)
                 request_obj.update_string_image_dict(req_string, word_image)
