@@ -5,6 +5,7 @@
 import zmq
 import json
 import string
+import re
 
 
 class AssignmentRequest:
@@ -16,6 +17,7 @@ class AssignmentRequest:
         self._images = []
         self._words = []
         self._string_image_dict = {}
+        self._images_subwords = {}
 
     def get_strings(self):
         return self._strings
@@ -28,6 +30,9 @@ class AssignmentRequest:
 
     def get_string_image_dict(self):
         return self._string_image_dict
+
+    def get_path_dict(self):
+        return self._images_subwords
 
     def set_strings(self, string_list):
         self._strings = string_list
@@ -51,6 +56,38 @@ class AssignmentRequest:
         # Return default image if no matches
         return "default.png"
 
+    def keywords_from_files(self):
+        """Scans the local image directory and returns the list of words found within file names within it."""
+
+        # Get images from library
+        images = self._images
+
+        # Create dictionary entry for each file path with path as key
+        for image in images:
+            self._images_subwords[image] = []
+
+        # Parse image file names and add word substrings to a word list
+        word_list = []
+        for key in self._images_subwords.keys():
+            file_string = key
+
+            # Assumes normal 3 letter convention if period is detected at that index and slices extension off
+            if key[-4] == ".":
+                file_string = key[:-4]
+
+            # Split apart all the words in
+            split_words = re.split('[_\-,.]+', file_string)
+
+            # Check for new words from split and add to a word list for each image file in the respective dictionary
+            for word in split_words:
+                if word not in word_list:
+                    if len(word) > 2:
+                        self._images_subwords[key].append(word)
+                        # word_list.append(word)  # OBSOLETE
+
+        # Return the word list
+        return # word_list  # OBSOLETE
+
 
 def process_request(request_obj):
     """
@@ -60,27 +97,55 @@ def process_request(request_obj):
     In either case, clears the request pipeline file after the operation is done.
     """
 
+    # Generate list of words available within image file path names
+    # image_file_words = request_obj.keywords_from_files()
+    request_obj.keywords_from_files()
+
+    # Filter out common irrelevant/short words and associated words/strings
+    skip_list = ("the", "and", "but", "for")
+
     # If wordlist not provided abort the process
     if str(type(request_obj)) != "<class '__main__.AssignmentRequest'>":
         return
 
     # See if any words within the string are contained with an image filename and assign them if they are.
     else:
-        # Filter out common irrelevant/short words and associated words/strings
-        skip_list = ("the", "and", "but", "for")
         # Need to append list of all stand-alone alpha characters? (function to append all single ascii chars?)
         string_list = request_obj.get_strings()
         for req_string in string_list:
             string_words = req_string.split()
             for word in string_words:
                 cleaned_word = remove_special_chars(word)
-                print(cleaned_word)
-                if cleaned_word in skip_list or len(cleaned_word) < 3:
+                # print(cleaned_word)
+                if cleaned_word.lower() in skip_list or len(cleaned_word) < 3:
                     continue  # Skip this substring if it's a known irrelevant factor
                 word_image = request_obj.image_for_word(cleaned_word)
                 request_obj.update_string_image_dict(req_string, word_image)
                 if request_obj.get_string_image_dict()[req_string] != "default.png":
                     break  # Move to next string once we know current is assigned to an image
+
+        # If no match found checking for substrings in images, check for image substrings in the string
+        for each_string in request_obj.get_strings():
+            if request_obj.get_string_image_dict()[each_string] == "default.png":
+                for key in request_obj.get_path_dict():
+                    for word_in_path in request_obj.get_path_dict()[key]:
+                        cleaned_img_word = remove_special_chars(word_in_path)
+                        print("Target String: " + each_string)
+                        print("Word Cleaned:", cleaned_img_word)
+                        if cleaned_img_word.lower() in skip_list or len(cleaned_img_word) < 3:
+                            print("skipped")
+                            continue  # Skip this substring if it's a known irrelevant factor
+
+                        if cleaned_img_word.lower() in each_string.lower():
+                            print("found!")
+
+                            request_obj.update_string_image_dict(each_string, key)
+                            print(request_obj.get_string_image_dict()[each_string])
+                            print("Word Image:", key)
+
+                        if request_obj.get_string_image_dict()[each_string] != "default.png":
+                            print("Selected!")
+                            break  # Move to next string once we know current is assigned to an image
 
         # Send the updated request object to the outgoing pipeline
         send_info(request_obj)
