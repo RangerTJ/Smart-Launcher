@@ -31,7 +31,7 @@ Once the microservice has assigned images into a string:image dictionary, it wil
 
 Once the client-side program stores the results dictionary, this allows the client to directly index into matching image files using a string as a key. For example, this might allow a client to auto-generate an image to match an accompanying line of text, based on appropriate images that are already available in the client's file database.  
 
-Note: If you would only like a single string to be associated, use the service like normal and just submit a JSON where the "strings" key's array only contains the string that you would like to be associated. (Exmaple: You have a user input a line, and as soon as their input is saved, this service is used to fetch a matching image).  
+Note: If you would only like a single string to be associated, use the service like normal and just submit a JSON where the "strings" key's array only contains the string that you would like to be associated. (Exmaple: You have a user input a line, and as soon as their input is saved, this service is used to fetch a matching image). This service also relies on the assumption that all image files have 3 letter extensions. Technically speaking, this could also be used to launch any file, not just images, so be mindful of how the service is being used and what is being passed to it.
 
 If a request is invalid, the string "format_error" will be sent back instead of an assignment dictionary, so it may be helpful to incorpoate that into client-side program logic in the case that an invalid request is somehow sent (to avoid throwing exceptions and such).  
 
