@@ -18,12 +18,14 @@ manually activate the request/response function.
 The current implementation of this is a console application navigated primarily by numerical option navigation and  
 typing words or strings when prompted by the system.  
 
+Requires locally-operated microservices on ports 5555 (microservice_server.py) and 5556 (randomizer python script - details to follow later).  
+
 # Microservice Instructions and Communication Contract
 Requires Python 3.10 and installing the zmq module.  
 
 The microservice portion of this project is designed to be a flexible way for client programs to quickly associate one of the images available to their program with a string. The intention is that this can be used to quickly and dynamically generate content where you may have a large library of images available, and you do not want to manually assign an image in an accompanying space every time. To start using the microservice, open a command-line terminal, navigate to the folder containing the microserverice, and run microservice_server.py. It will actively listen for requests and respond to them until the program is stopped (in software like PyCharm you may need to hit the "stop" button twice to fully halt the program) or the terminal window is closed. In the event the socket is left open for some reason (which, on Windows, tends to happen if you try to run the script directly from a window), pull up your computer's task manager and look for a python.exe process to terminate (under task manager "details" tab in Windows 10).  
 
-To achieve this, the service uses socekts via ZeroMQ (https://zeromq.org/get-started/). JSON-formatted infromation is sent form a requesting client to the microservice, which acts as a server, listening in the socket's port for a request. Once the request is recieved, it runs a process to associate the strings in the request to one of the image filepaths in the request and it sends back the association to the requesting client.  It communincates with an string-file association microservice on port 5555 and with a random selection service on port 5556, so it requires both services to be running to operate.
+To achieve this, the service uses socekts via ZeroMQ (https://zeromq.org/get-started/). JSON-formatted infromation is sent form a requesting client to the microservice, which acts as a server, listening in the socket's port for a request. Once the request is recieved, it runs a process to associate the strings in the request to one of the image filepaths in the request and it sends back the association to the requesting client via port 5555.  
 
 The JSON object sent by the requesting client should be the JSON-encoded form of a dictionary with two specific keys, "strings" and "images". These two keys are expected to have arrays as values, with the former being an array of strings to associate with an image, and the latter being an array of images that the requesting client has available within the client program's files. An example of a valid JSON request would be: {"strings": ["Pizza eating!", "Eat your veggies!"], "images": ["pizza.png", "carrot-veggies.png"]}  
 
