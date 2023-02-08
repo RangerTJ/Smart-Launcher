@@ -24,8 +24,7 @@ Note: If you would only like a single string to be associated, use the service l
 
 If a request is invalid, the string "format_error" will be sent back instead of an assignment dictionary, so it may be helpful to incorpoate that into client-side program logic in the case that an invalid request is somehow sent (to avoid throwing exceptions and such).  
 
-**Example python code for a client request to the Microservice**  
-This also has examples of the kinds of ZMQ socket commands used to send and recieve the JSON files via a client.
+**Example Call: Python code for a client request to the Microservice**  
 ![ExampleCall](https://user-images.githubusercontent.com/87739732/217414488-e9f8bb1f-676a-4a03-985c-2f7329e7d165.JPG)
 
 **Diagram of Client-Microservice Interaction**
