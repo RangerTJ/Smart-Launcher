@@ -160,10 +160,13 @@ class WordImageTool:
         Returns the image to associate with the file.
         """
 
-        # Connect the socket to the server
+        # Connect the socket to the server - timeout set to half a second, since locally processed
         context = zmq.Context()
         print("Attempting connection to ASSIGNMENT SERVER...")
         socket = context.socket(zmq.REQ)
+        socket.setsockopt(zmq.SNDTIMEO, 500)
+        socket.setsockopt(zmq.RCVTIMEO, 500)
+        socket.setsockopt(zmq.LINGER, 0)
         socket.connect("tcp://localhost:5555")
 
         # Compile and send request
@@ -172,11 +175,16 @@ class WordImageTool:
         socket.send_json(request_json)
 
         # Process Reply
-        reply = json.loads(socket.recv().decode())
-        print(reply, "received...")
-        print("Image selected:", reply[user_input])
-        socket.close()
-        return reply[user_input]
+        if socket.poll(500) == 0:
+            print("No server response detected. Default image used.")
+            socket.close()
+            return "default.png"
+        else:
+            reply = json.loads(socket.recv().decode())
+            print(reply, "received...")
+            print("Image selected:", reply[user_input])
+            socket.close()
+            return reply[user_input]
 
     def update_image_list(self):
         """"""
