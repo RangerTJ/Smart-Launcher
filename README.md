@@ -1,22 +1,9 @@
 ﻿# CS361-Project: String to Image Association
-This program has two components - a local client service and a microservice that can respond to a request.  
-Local users can input a string and the program will load an image from an image folder that best matches their  
-string's content, based on an algorithm analysis (related to keywords stored within the program).  
+This program has two components - a local client service and a microservice that can respond to a request. Local users can input a string and the program will load a file from a folder that best matches their string's content, based on an algorithm analysis (related to keywords stored within the program). By default, this is initailized to an images folder local to this application with a default.png gile. While it works for images (and images were the initial idea), it should work with any file type as well, as long as it has a .XYZ style 3-letter extension. So this could also be feasibly used to launch sound files, programs, or shortcuts.
 
-The user can further customize this by using a settings menu to enter additional keywords to be used as a factor in  
-analyzing strings and what images best fit. Any images in the images/ folder relatively local to the script will be  
-considered. A "default.png" file is expected as part of minimum functionality, so that some form of image is always  
-returned. By appropriately naming images and adding them to the image folder and creating additional keywords, the
-user can expand the potential image associations created by the application.  
+This is a command-line application and navigated primarily with numerical inputs corresponding to options at each menu screen. At any screen, you can also type "HELP" to access help text, "MAIN" to return to the main menu, or "QUIT" to close the application (case-insensitive). The three current main functions of the application are a manual service to launch a file that most closely matches a string the user is prompted to input, a service to launch a random file from those available, and an option to list all the files availablef or association in the current "target" file directory. Files are launched with whatever program is assigned to be the default application to handle that type of file by your operating system. 
 
-The user can also execute the early stages of a microservice in this first version. There is a command available to  
-manually check a request pipeline JSON file for request content. If content is found, it is returned via a response  
-pipeline JSON file, which can be accessed by other applications. Current microservice implementation relies on the  
-other application knowing where to submit a request and find a response, and they must wait for a local user to  
-manually activate the request/response function.  
-
-The current implementation of this is a console application navigated primarily by numerical option navigation and  
-typing words or strings when prompted by the system.  
+Down the road, I am looking to add support for changing the "target" file directory of available files for association while within the program, and adding a feature that allows you to save the new location of the new target directory so that it persists between sessions (along with a restore to default option).
 
 Requires locally-operated microservices on ports 5555 (microservice_server.py) and 5556 (randomizer python script - details to follow later).  
 
