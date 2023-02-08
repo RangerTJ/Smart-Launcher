@@ -25,7 +25,8 @@ Note: If you would only like a single string to be associated, use the service l
 If a request is invalid, the string "format_error" will be sent back instead of an assignment dictionary, so it may be helpful to incorpoate that into client-side program logic in the case that an invalid request is somehow sent (to avoid throwing exceptions and such).  
 
 **Example python code for a client request to the Microservice**
-![ExampleCall](https://user-images.githubusercontent.com/87739732/216794236-69f83c1f-e7cb-4ce2-9a20-79996fc95b85.JPG)  
+![ExampleCall](https://user-images.githubusercontent.com/87739732/217414488-e9f8bb1f-676a-4a03-985c-2f7329e7d165.JPG)
 
 **Diagram of Client-Microservice Interaction**
-![microUMLbetter](https://user-images.githubusercontent.com/87739732/216795635-340bdb1c-6206-4022-b81e-e18e1acb9144.JPG)
+![microUMLNewName](https://user-images.githubusercontent.com/87739732/217414502-ea357b89-caaa-48fc-aa94-62b8c6ecde4d.JPG)
+
