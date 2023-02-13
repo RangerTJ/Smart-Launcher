@@ -18,16 +18,19 @@ The JSON object sent by the requesting client should be the JSON-encoded form of
 
 Once the microservice has assigned files into a string:file dictionary, it will encode the dictionary to a JSON object and send it back to the requesting client. This JSON object will need to be decoded back into its non-byte form using the JSON decoding methods available to whatever respective programming language is used by the client. An example of what to expect from a decoded JSON (continuing the above example) would be: {"Pizza eating!": "pizza.png", "Eat your veggies!": "carrot-veggies.png"}  
 
-Once the client-side program stores the results dictionary, this allows the client to directly index into matching files using a string as a key. For example, this might allow a client to auto-assign a file to match an accompanying line of text, based on appropriate files that are already available in the client's file database.  
-
+Once the client-side program stores the results dictionary, this allows the client to directly index into matching files using a string as a key. For example, this might allow a client to auto-assign a file to match an accompanying line of text, based on appropriate files that are already available in the client's file database. In a case where more than one possible match is found for a string, one of the matching files will be randomly selected as the return. In a case where no match is found for the string, it will be matched with the string ".defaultChoice", which can be used by the client program to determine what logic to execute when no match was found. It is up to the programmer of the client to determine how they would like to process the ".defaultChoice" association, in terms of triggering default behavior.    
 Note: If you would only like a single string to be associated, use the service like normal and just submit a JSON where the "strings" key's array only contains the string that you would like to be associated. (Exmaple: You have a user input a line, and as soon as their input is saved, this service is used to fetch a matching file). This service also relies on the assumption that all files have 3 letter extensions. Using it in directories of files of a different extnsion length may cause incorrect substring generation. This could also be used to launch any file, not just images, so be mindful of how the service is being used and what is being passed to it.  
 
-If a request is invalid, the string "format_error" will be sent back instead of an assignment dictionary, so it may be helpful to incorpoate that into client-side program logic in the case that an invalid request is somehow sent (to avoid throwing exceptions and such).  
+If a request is invalid (wrong request format or there are no requested strings), the string "format_error" will be sent back instead of an assignment dictionary, so it may be helpful to incorpoate that into client-side program logic in the case that an invalid request is somehow sent (to avoid throwing exceptions and such).  
 
 **Example Call: Python code for a client request to the Microservice**  
-![ExampleCall](https://user-images.githubusercontent.com/87739732/217414488-e9f8bb1f-676a-4a03-985c-2f7329e7d165.JPG)
-
-**Diagram of Client-Microservice Interaction**
+![Client_example](https://user-images.githubusercontent.com/87739732/218598540-661d682c-24f1-4fa8-8d1b-ea57fa041b98.JPG)  
+ 
+ Ouput possibilities from this request, based on random selection of files that match the string:
+![Client_example_output](https://user-images.githubusercontent.com/87739732/218598629-0a099459-4bcd-4b52-aee7-f18d88e08a46.JPG)  
+![Client_example_output_alt](https://user-images.githubusercontent.com/87739732/218598636-1697d6bc-71f5-4adb-9c86-92bc04a80d24.JPG)  
+  
+**Diagram of Client-Microservice Interaction**  
 ![microUMLNewName](https://user-images.githubusercontent.com/87739732/217414999-c40c4227-807c-47ef-a3c4-c5b43f6efeb1.JPG)
 
 
