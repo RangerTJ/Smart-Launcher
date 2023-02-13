@@ -12,6 +12,8 @@ import string
 import re
 import zmq
 
+default_file = "default.png"
+
 
 class WordImageTool:
     """Represents a collection of words that are associated with specific image files and their affiliated functions."""
@@ -170,7 +172,7 @@ class WordImageTool:
         socket.connect("tcp://localhost:5555")
 
         # Compile and send request
-        request_json = {"strings": [user_input], "images": self._images}
+        request_json = {"strings": [user_input], "files": self._images}
         print("Sending request...")
         socket.send_json(request_json)
 
@@ -178,11 +180,15 @@ class WordImageTool:
         if socket.poll(500) == 0:
             print("No server response detected. Default image used.")
             socket.close()
-            return "default.png"
+            return default_file
         else:
             reply = json.loads(socket.recv().decode())
             print(reply, "received...")
-            print("Image selected:", reply[user_input])
+            if reply[user_input] == ".defaultChoice":
+                print("Image selected:", default_file)
+                reply[user_input] = default_file
+            else:
+                print("Image selected:", reply[user_input])
             socket.close()
             return reply[user_input]
 
@@ -246,23 +252,6 @@ class AssignmentRequest:
     def update_string_image_dict(self, arg_string, image):
         """Adds to or updates an entry in the object's word-image path dictionary."""
         self._string_image_dict[arg_string] = image
-
-    def gen_request_word_dict(self):
-        """Generates a word-image relation based on the word list and image files."""
-        for word in self._words:
-            self._word_dict[word] = self.image_for_word(word)
-
-    def image_for_word(self, word) -> str:
-        """Assigns a word (in a request object) to the first matching file name string found."""
-        for image in self._images:
-            # print(word, image)
-            if word.lower() in image.lower():
-                # print("------------")
-                # print("Success!\n", image)
-                return image
-
-        # Return default image if no matches
-        return "default.png"
 
 
 # Adapted from explanation of strings module located here:

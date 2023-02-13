@@ -78,9 +78,9 @@ def process_request(request_obj):
                 cleaned_word = remove_special_chars(word)
                 if cleaned_word in skip_list:
                     continue  # Skip this substring if it's a known irrelevant factor
-                word_image = request_obj.image_for_word(cleaned_word)
-                request_obj.update_string_image_dict(req_string, word_image)
-                if request_obj.get_string_image_dict()[req_string] != "default.png":
+                word_image = request_obj.file_for_word(cleaned_word)
+                request_obj.update_string_files_dict(req_string, word_image)
+                if request_obj.get_string_files_dict()[req_string] != "default.png":
                     break  # Move to next string once we know current is assigned to an image
 
         # Send the updated request object to the outgoing pipeline
@@ -94,7 +94,7 @@ def send_info(request_obj):
     an image file name, and a path to the image.
     """
     # open and write self.request's object or its dictionary attribute
-    send_data = request_obj.get_string_image_dict()
+    send_data = request_obj.get_string_files_dict()
     send_data_json = json.dumps(send_data, indent=4)
     with open("test_response.json", "w") as reply_pipe:
         reply_pipe.write(send_data_json)

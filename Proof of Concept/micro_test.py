@@ -11,7 +11,7 @@ def update_image_list():
     """"""
 
     image_list = []
-    images = os.listdir(path='images')
+    images = os.listdir(path='../images')
     for image in images:
         image_list.append(image)
     return image_list
