@@ -178,7 +178,7 @@ class WordImageTool:
 
         # Process Reply
         if socket.poll(500) == 0:
-            print("No server response detected. Default image used.")
+            print("No server response detected. Default file used.")
             socket.close()
             return default_file
         else:
@@ -321,13 +321,21 @@ def request_surprise():
     context = zmq.Context()
     print("Attempting connection to SURPRISE SERVER...")
     socket = context.socket(zmq.REQ)
+    socket.setsockopt(zmq.SNDTIMEO, 500)
+    socket.setsockopt(zmq.RCVTIMEO, 500)
+    socket.setsockopt(zmq.LINGER, 0)
     socket.connect("tcp://localhost:5556")
     socket.send_string(str(word_list))
 
-    # Decode reply socket (and close it)
-    reply = socket.recv().decode()
-    socket.close()
-    return reply
+    if socket.poll(500) == 0:
+        print("No server response detected. Default file used.")
+        socket.close()
+        return default_file
+    else:
+        # Decode reply socket (and close it)
+        reply = socket.recv().decode()
+        socket.close()
+        return reply
 
     # TO-DO: Here or in interface loop: Open image based on reply (using MY microservice or built-ins)
 
