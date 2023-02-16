@@ -1,6 +1,6 @@
 # Author: Taylor Jordan
 # GitHub username: Raptor2k1
-# Date: 1/29/2023
+# Date: 2/13/2023
 
 import zmq
 import json
@@ -69,16 +69,17 @@ class AssignmentRequest:
 
         # Get images from library and create dictionary entry, keyed to file paths
         files = self._files
-        for file in files:
+        for file in files:  # Note: Don't send list as string, or this will look at characters instead
             self._files_subwords[file] = []
 
         # Parse image file names and add word substrings to a word list
         word_list = []
         for key in self._files_subwords.keys():
+            print(key, len(key))
             file_string = key
 
             # Assumes normal 3 letter convention if period is detected at that index and slices extension off
-            if key[-4] == ".":
+            if len(key) > 3 and key[-4] == ".":
                 file_string = key[:-4]
 
             # Split apart all the word-ish substrings in the filename
@@ -226,6 +227,3 @@ while True:
         # Process the request object and send appropriate reply
         process_request(assignment_request_obj)
         print("Attempted to send reply.")
-
-
-# Need to add a place to make sure all request strings have an empty set at start

@@ -1,9 +1,10 @@
 # Author: Taylor Jordan
 # GitHub username: Raptor2k1
-# Date: 1/22/2023
-# Description:  Program that associates a folder of image files with words. Dynamically associates uses these words to
-#               associate input strings with related images, assuming the images are named in ways that contain key
-#               words. Capable of checking a microservice request list and replying with pre-determined associations
+# Date: 2/13/2023
+# Description:  Program that associates a folder of files with words. Dynamically associates uses these words to
+#               associate input strings with related files, assuming they are named in ways that contain parsable
+#               words. Capable of checking a microservice request list and replying with pre-determined associations.
+#               Uses a randomization microservice for a "surprise" result option.
 
 import os
 import time
@@ -12,13 +13,17 @@ import string
 import re
 import zmq
 
-default_file = "default.png"
+# Initialize Default Trackers
+default_file_init = "default.png"
+default_path_init = "images"
+default_file_current = default_file_init
+default_path_current = default_path_init
 
 
-class WordImageTool:
-    """Represents a collection of words that are associated with specific image files and their affiliated functions."""
+class WordFileTool:
+    """Represents a collection of words that are associated with specific files and their affiliated functions."""
     def __init__(self):
-        self._images = []
+        self._files = []
         self._request = None
 
     def main_menu(self):
@@ -27,15 +32,15 @@ class WordImageTool:
         No parameters. Returns nothing when quitting, otherwise triggers different operational loop paths.
         """
 
-        # Update the image directory then start things up
-        self.update_image_list()
-        mode = input("\nString to Image converter: MAIN MENU\n"
+        # Update the file directory then start things up
+        self.update_file_list()
+        mode = input("\nString to File Launcher: MAIN MENU\n"
                      "------------------------------------\n"
-                     " Associate a string with an image!\n"
+                     " Launch a file with a string!\n"
                      "------------------------------------\n"
-                     "*Input '1' to MATCH A STRING: Type a string and display its matching image.\n"
-                     "*Input '2' for REQUEST A SURPRISE: Displays a surprise phrase and image!\n"
-                     "*Input '3' for IMAGE DIRECTORY: Lists all images currently available for assignment.\n"
+                     "*Input '1' for MATCH A STRING: Type a string and display its matching file.\n"
+                     "*Input '2' for REQUEST A SURPRISE: Displays a surprise phrase and file!\n"
+                     "*Input '3' for view FILE DIRECTORY: Lists all files currently available for assignment.\n"
                      "*Input 'HELP' to for additional instructions on all features.\n"
                      "*Input 'QUIT' to CLOSE this application.\n"
                      ">>>")
@@ -50,7 +55,7 @@ class WordImageTool:
         elif mode == "3":
             print("Current Files Available for Association\n"
                   "-----------------------------------------\n")
-            self.list_images()
+            self.list_files()
             print("\n")
 
         elif mode.lower() == "help":
@@ -69,21 +74,21 @@ class WordImageTool:
     def manual_menu(self):
         """"""
 
-        self.update_image_list()
-        choice = input("\nString to Image converter: MATCH A STRING\n"
-                       "------------------------------------\n"
-                       "  Input a string and see its image!\n"
-                       "------------------------------------\n"
+        self.update_file_list()
+        choice = input("\nString to File Launcher:: MATCH A STRING\n"
+                       "---------------------------------------------\n"
+                       "  Input a string and launch a matching file!\n"
+                       "---------------------------------------------\n"
                        "*Input '1' to START.\n"
                        "*Input '2' to return to the MAIN MENU.\n"
-                       "*Input 'HELP' to for additional instructions on manually assigning text to an image.\n"
+                       "*Input 'HELP' to for additional instructions on this feature.\n"
                        ">>>")
 
-        # Type a string and match it to an image
+        # Input a string and match it to a file
         if choice == '1':
             my_string = input("\nType in your new string now. Hit 'Enter' when you are done to submit it.\n"
-                              "You will then be presented with the available image that best corresponds.\n")
-            self.string_to_image_display(my_string)
+                              "You will then be presented with an available file that corresponds to it.\n")
+            self.string_to_file_display(my_string)
             self.manual_menu()
 
         elif choice.lower() == "2":
@@ -108,27 +113,27 @@ class WordImageTool:
         No parameters. Returns nothing when quitting, otherwise triggers different operational loop paths.
         """
 
-        mode = input("\nString to Image converter: REQUEST A SURPRISE\n"
-                     "----------------------------\n"
-                     " View a Surprise Image!\n"
-                     "---------------------------\n"
-                     "*Input '1' to see a surprise image!\n"
+        mode = input("\nString to File Launcher: REQUEST A SURPRISE\n"
+                     "--------------------------\n"
+                     " Launch a Surprise File!\n"
+                     "--------------------------\n"
+                     "*Input '1' to launch a surprise file!\n"
                      "*Input '2' to return to the MAIN MENU.\n"
-                     "*Input 'HELP' to for additional instructions on all features.\n"
+                     "*Input 'HELP' to for additional instructions on this feature.\n"
                      "*Input 'QUIT' to CLOSE this application.\n"
                      ">>>")
 
         # Handle user decisions
         if mode == "1":
             surprise = request_surprise()
-            self.string_to_image_display(surprise)
+            self.string_to_file_display(surprise)
             self.surprise_menu()
 
         elif mode.lower() == "2":
             self.main_menu()
 
         elif mode.lower() == "help":
-            help_me(0)
+            help_me(2)
             self.surprise_menu()
 
         elif mode.lower == "quit":
@@ -140,24 +145,23 @@ class WordImageTool:
             self.surprise_menu()
 
     # Helper Methods
-    def string_to_image_display(self, arg_string):
+    def string_to_file_display(self, arg_string):
         """
         Breaks down an argument string into sub-strings and searches each one for each key word in the gallery dict.
-        If one is found, the associated image in the dictionary is displayed (for a local-call). The matched image path
-        image is also passed along for use by the listening mode loop (as a string).
+        If one is found, the associated file in the dictionary is displayed (for a local-call).
         """
 
         # Call microservice to request association
-        chosen_image = self.request_association(arg_string)
-        print("Displaying", chosen_image, "in 1 second...")
+        chosen_file = self.request_association(arg_string)
+        print("Displaying", chosen_file, "in 1 second...")
         time.sleep(1)
-        os.startfile("images\\" + chosen_image)
+        os.startfile(default_path_current + "\\" + chosen_file)
         return
 
     def request_association(self, user_input: str):
         """
         Requests the association of a string with an image using an association microservice.
-        Sends an array containing the one string to associate and the current list of locally-available images.
+        Sends an array containing the one string to associate and the current list of locally-available files.
         Receives a dictionary of the string and image path to associate with it and decodes it.
         Returns the image to associate with the file.
         """
@@ -172,7 +176,7 @@ class WordImageTool:
         socket.connect("tcp://localhost:5555")
 
         # Compile and send request
-        request_json = {"strings": [user_input], "files": self._images}
+        request_json = {"strings": [user_input], "files": self._files}
         print("Sending request...")
         socket.send_json(request_json)
 
@@ -180,34 +184,34 @@ class WordImageTool:
         if socket.poll(500) == 0:
             print("No server response detected. Default file used.")
             socket.close()
-            return default_file
+            return default_file_current
         else:
             reply = json.loads(socket.recv().decode())
             print(reply, "received...")
             if reply[user_input] == ".defaultChoice":
-                print("Image selected:", default_file)
-                reply[user_input] = default_file
+                print("File selected:", default_file_current)
+                reply[user_input] = default_file_current
             else:
-                print("Image selected:", reply[user_input])
+                print("File selected:", reply[user_input])
             socket.close()
             return reply[user_input]
 
-    def update_image_list(self):
+    def update_file_list(self):
         """"""
 
-        # Reset the image list then repopulate it
-        self._images = []
-        images = os.listdir(path='images')
-        for image in images:
-            self._images.append(image)
+        # Reset the file list then repopulate it
+        self._files = []
+        files = os.listdir(path=default_path_current)
+        for file in files:
+            self._files.append(file)
 
-    def list_images(self):
-        """Generates and returns a list of all image file names currently available and updates working image list."""
-        print("\nImages files available for word-image association...\n"
-              "------------------------------------------------------\n")
-        self.update_image_list()
-        for image in self._images:
-            print(image, "\n")
+    def list_files(self):
+        """Generates and returns a list of all file file names currently available and updates working file list."""
+        print("\nFiles available for word-file association...\n"
+              "------------------------------------------------\n")
+        self.update_file_list()
+        for file in self._files:
+            print(file, "\n")
 
 
 class AssignmentRequest:
@@ -216,16 +220,16 @@ class AssignmentRequest:
 
     def __init__(self):
         self._strings = []
-        self._images = []
+        self._files = []
         self._words = []
         self._word_dict = {}
-        self._string_image_dict = {}
+        self._string_file_dict = {}
 
     def get_strings(self):
         return self._strings
 
-    def get_images(self):
-        return self._images
+    def get_files(self):
+        return self._files
 
     def get_words(self):
         return self._words
@@ -233,25 +237,25 @@ class AssignmentRequest:
     def get_word_dict(self):
         return self._word_dict
 
-    def get_string_image_dict(self):
-        return self._string_image_dict
+    def get_string_file_dict(self):
+        return self._string_file_dict
 
     def set_strings(self, string_list):
         self._strings = string_list
 
-    def set_images(self, image_file_list):
-        self._images = image_file_list
+    def set_files(self, file_list):
+        self._files = file_list
 
     def set_words(self, word_list):
         self._words = word_list
 
-    def update_word_dict(self, word, image):
+    def update_word_dict(self, word, file):
         """Adds to or updates an entry in the object's word-image path dictionary."""
-        self._word_dict[word] = image
+        self._word_dict[word] = file
 
-    def update_string_image_dict(self, arg_string, image):
+    def update_string_file_dict(self, arg_string, file):
         """Adds to or updates an entry in the object's word-image path dictionary."""
-        self._string_image_dict[arg_string] = image
+        self._string_file_dict[arg_string] = file
 
 
 # Adapted from explanation of strings module located here:
@@ -277,22 +281,22 @@ def check_request_pipeline(pipe_path):
     return json.loads(requests)
 
 
-# Functions for Random Images based on files available
+# Functions for Random Files based on files available
 def keywords_from_files():
-    """Scans the local image directory and returns the list of words found within file names within it."""
+    """Scans the local file directory and returns the list of words found within file names within it."""
 
-    # Get images from library
+    # Get files from library
     file_list = []
-    images = os.listdir(path='images')
-    for image in images:
-        file_list.append(image)
+    files = os.listdir(path=default_path_current)
+    for file in files:
+        file_list.append(file)
 
-    # Parse image file names and add word substrings to a word list
+    # Parse file names and add word substrings to a word list
     word_list = []
-    for image in file_list:
-        file_string = image
-        if image[-4] == ".":
-            file_string = image[:-4]
+    for file in file_list:
+        file_string = file
+        if file[-4] == ".":
+            file_string = file[:-4]
 
         # Split apart all the words in
         split_words = re.split('[_\-,.]+', file_string)
@@ -309,7 +313,7 @@ def keywords_from_files():
 
 def request_surprise():
     """
-    Generates a list of words in images in local library. Sends word list via socket JSON to a
+    Generates a list of words in files in the local library. Sends word list via socket JSON to a
     microservice that will return a relevant word or phrase. An image is displayed based on the phrase
     returned from the microservice.
     """
@@ -330,14 +334,12 @@ def request_surprise():
     if socket.poll(500) == 0:
         print("No server response detected. Default file used.")
         socket.close()
-        return default_file
+        return default_file_current
     else:
         # Decode reply socket (and close it)
         reply = socket.recv().decode()
         socket.close()
         return reply
-
-    # TO-DO: Here or in interface loop: Open image based on reply (using MY microservice or built-ins)
 
 
 # Help Documentation for Interface Loop
@@ -353,14 +355,14 @@ def help_me(chapter: int):
             "with no value entered works too! It is also probably the fastest method of navigational backtracking.\n" \
             "A local user can enter a string in the console and your device will display the image file that best\n" \
             "fits your prompt (Main Menu option '1'). You can also manually respond to a microservice request,\n" \
-            "where a request pipeline with a list of images available and a list of strings that need to be\n" \
+            "where a request pipeline with a list of files available and a list of strings that need to be\n" \
             "assigned to them exist. The program then assigns each string a matching image and returns their\n" \
             "relation as a dictionary in a response pipeline, for use by another program (Main Menu option '2').\n" \
             "If you would like to further refine word-image associations for local user string inputs, you can\n" \
             "go to the settings area (Main Menu option '3') and can add or remove key words used in string-image\n" \
             "assignment. For more detailed help on these specific tasks, use 'HELP' in any other section, as needed."
 
-    manual = "\nHELP: How to See my Text String's Image\n" \
+    manual = "\nHELP: Launching a file Based on Input\n" \
              "---------------------------------------\n" \
              "From this menu, simply input '1' to start the process. You will be asked to enter a string of text.\n" \
              "Once you are done, you just hit 'enter and your device should load up your standard image-viewing\n" \
@@ -370,7 +372,7 @@ def help_me(chapter: int):
              "program and using the settings menu (option '3' from Main Menu) to add additional key words that you\n" \
              "would like the program to pick up on and associate with one of the images in the image folder."
 
-    request = "\nHELP: Respond to a Microservice Request\n" \
+    surprise = "\nHELP: Launching a Surprise File\n" \
               "---------------------------------------\n" \
               "From this menu, simply input '1' to initiate the response to the most recent microservice request.\n" \
               "A request pipeline JSON file will then be read (containing a dictionary with 'images' associated\n" \
@@ -406,51 +408,21 @@ def help_me(chapter: int):
     elif chapter == 1:
         print(manual)
     elif chapter == 2:
-        print(request)
+        print(surprise)
     elif chapter == 3:
         print(settings)
 
 
 # START PROGRAM: Generate a blank dictionary file if necessary
-word_images = WordImageTool()
-word_images.main_menu()
-
-
-# Compatibility Notes
-# ------------
-# Priority to left side of strings and image names. Name files and write strings accordingly for maximum compatibility.
-# For a string to be assigned a non-default image, the request just needs a dictionary with a list of available image
-# file names and a list of strings to be assigned to them.
-# Avoid contractions on any word that you want to be assigned to an image. It'll mess up the algorithm.
-# Inclusive/plural and longer spellings of image names will make it easier to match a word to them
-# Ex. dogs.png would match with both dog and dogs; doggie would match with doggie and dog
+word_files = WordFileTool()
+word_files.main_menu()
 
 
 # TODO LIST
 # -----------
-# May need to expand knockout list for common irrelevant words
-# (OBSOLETE?) Import word list from file method added to settings - tie into interface later if needed
-# Update local method to get dynamic word list directly from input string vs. maintaining a word association dictionary
-# (OPTIONAL - need to weigh pros/cons)
-# Clean up data saving points
-# Do a sweep for redundant code
-# (OPTIONAL) Expand word checks to repeat again in opposite order if no match found on first pass
-# for cases when a word may fit into another one way, but not the other. Could do for images to if period and
-# everything after was sliced off, theoretically (less false negative connections)
-# RANDOMIZATION CONCEPT: Could theoretically key words to a list instead of a image path string, which would allow for
-#                        selection of an image inside the list (random or otherwise) - would need to re-write most logic
-# Future GUI stuff: Use form interface and access python functions on back end somehow?
-# Have web JS call hosted python script
-# Just import microservice and then call it from the manual request, rather than all the convoluted stuff with word
-# dictionaries. Just need to make the skip list more robust.
-
-# Microservice Interactions
-# -------------------------
-# Takes data in form of a JSON containing a dictionary with 3 specific keys that have lists as values
-# *"strings"
-# *"images" (relative image paths/file names)
-# Replies with a dictionary of strings keyed to relative file paths
-# May swap JSON to sockets or something later, but interaction should be the same
+# Customize default file and filepath
+# Save/Load persistent default
+# Reset to original defaults option
 
 # Experimental Stuff
 # ------------------
