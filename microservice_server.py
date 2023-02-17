@@ -75,7 +75,7 @@ class AssignmentRequest:
         # Parse image file names and add word substrings to a word list
         word_list = []
         for key in self._files_subwords.keys():
-            print(key, len(key))
+            # print(key, len(key))
             file_string = key
 
             # Assumes normal 3 letter convention if period is detected at that index and slices extension off
@@ -195,6 +195,19 @@ def remove_special_chars(substring: str) -> str:
     return word
 
 
+def error_check_request(request_dict):
+    """Returns true if there is an error in the format of the request object."""
+    if "strings" not in request_dict or "files" not in request_dict or len(request_dict["strings"]) < 1:
+        print("Error: Request contained improper structure.")
+        return True
+    elif isinstance(request_dict["strings"], list) is False or isinstance(request_dict["files"], list) is False:
+        print("Error: Request keys did not have arrays as values.")
+        return True
+    else:
+        print("Request validated.")
+        return False
+
+
 # Set up Server's socket container/transport and bind socket
 context = zmq.Context()
 socket = context.socket(zmq.REP)
@@ -212,8 +225,8 @@ while True:
     print(request_dict)
 
     # Error handling - if not both a strings and images key, reply with an error message
-    if "strings" not in request_dict or "files" not in request_dict or len(request_dict["strings"]) < 1:
-        print("Error: Request contained improper structure. Sending error message.")
+    if error_check_request(request_dict) is True:
+        print("Sending error message...")
         socket.send_string("format_error")
         print("Format error reply sent.")
 
