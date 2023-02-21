@@ -3,7 +3,7 @@ This project has two components - a client-side application (smart_launcher.py) 
 
 UI Navigaiton is performed by typing in a number or text prompt that is listed as corresponding to the menu option, and hitting 'Enter'. At any screen, you can type "HELP" to access help text or "QUIT" to close the application. Both of these text-based commands are case-insensitive.  
 
-Requires locally-operated microservices on ports 5555 (microservice_server.py) and 5556 (chooseRandom.py from https://github.com/fitellieburger/CS361). Both of these must be running in the background to respond to requests for text-file association and random choice selection from the main application (smart_launcher.py). The locaiton of these files doesn't matter, as long as the scripts are running in the background while smart_launcher.py is active, and ports 5555 and 5556 are both kept free for both of these services' socket connections.  
+Requires locally-operated microservices on ports 5555 (smart_selector.py) and 5556 (chooseRandom.py from https://github.com/fitellieburger/CS361). Both of these must be running in the background to respond to requests for text-file association and random choice selection from the main application (smart_launcher.py). The locaiton of these files doesn't matter, as long as the scripts are running in the background while smart_launcher.py is active, and ports 5555 and 5556 are both kept free for both of these services' socket connections.  
 
 # Smart Selector - Microservice Instructions and Communication Contract
 Requires Python 3.10 and installing the zmq module.  
