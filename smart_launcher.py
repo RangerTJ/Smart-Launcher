@@ -9,7 +9,7 @@ Description:    Launches files or folders contained within a target directory ba
 
 Requirements:   Needs the chooseRandom.py server script from https://github.com/fitellieburger/CS361/ for the surprise
                 service to function properly. The script must be run/server must be active in order for the random
-                assignment service to function correctly. Similarly, microservice_server.py from my own project page
+                assignment service to function correctly. Similarly, smart_selector.py from my own project page
                 must be running in order for string-file launching to work. This server script is available at:
                 https://github.com/Raptor2k1/361-Project
 
@@ -330,6 +330,12 @@ def reset_defaults():
     save_default()
 
 
+def default_check():
+    """Checks for the default local folder and creates it if it does not yet exist."""
+    if os.path.exists(default_path_init) is False:
+        os.mkdir(default_path_init)
+
+
 def request_surprise():
     """
     Generates a list of words in files in the local library. Sends word list via socket JSON to a
@@ -426,6 +432,7 @@ def help_me(chapter: int):
 
 
 # START PROGRAM: Generate a blank dictionary file if necessary
+default_check()
 load_saved_defaults()
 word_files = WordFileTool()
 word_files.main_menu()
