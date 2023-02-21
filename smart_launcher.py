@@ -13,9 +13,16 @@ Requirements:   Needs the chooseRandom.py server script from https://github.com/
                 must be running in order for string-file launching to work. This server script is available at:
                 https://github.com/Raptor2k1/361-Project
 
-References:     https://zeromq.org/get-started/
+References:     Sockets / ZeroMQ
+                https://zeromq.org/get-started/
+
+                RegEx String Splitting
                 https://pynative.com/python-regex-split/
+
+                Speech Recognition
+                https://pypi.org/project/SpeechRecognition/
                 https://www.scaler.com/topics/remove-special-characters-from-string-python/
+                https://stackoverflow.com/questions/62401885/python-speech-recognition-stuck-at-listening
 """
 
 import os
@@ -25,6 +32,7 @@ import string
 import re
 import zmq
 import sys
+import speech_recognition
 from pathlib import PureWindowsPath
 
 
@@ -60,8 +68,9 @@ class WordFileTool:
                        " Launch a file with a string!\n"
                        "------------------------------------\n"
                        "*Input '1' to TEXT LAUNCH: Type in text that references an available file's name to start it!\n"
-                       "*Input '2' for a SURPRISE: Launches a mystery file! Surprise!\n"
-                       "*Input '3' for SETTINGS: Change the launch directory or view its contents.\n"
+                       "*Input '2' for VOICE COMMAND: Launches a file with your voice!\n"
+                       "*Input '3' for a SURPRISE: Launches a mystery file! Surprise!\n"
+                       "*Input '4' for SETTINGS: Change the launch directory or view its contents.\n"
                        "*Input 'HELP' to for additional information on all features.\n"
                        "*Input 'QUIT' to CLOSE this application.\n"
                        ">>>")
@@ -70,8 +79,10 @@ class WordFileTool:
         if choice == "1":
             self.string_launcher()
         elif choice == "2":
-            self.surprise()
+            self.voice_launcher()
         elif choice == "3":
+            self.surprise()
+        elif choice == "4":
             self.settings_menu()
         elif choice.lower() == "help":
             os.system(clear_cmd)
@@ -96,6 +107,20 @@ class WordFileTool:
         my_string = input("\nType in your new string now. Hit 'Enter' when you are done, to submit it.\n"
                           "The program will then launch a matching file, if one is found!\n"
                           ">>>")
+        self.string_to_file_launch(my_string)
+        input("\nPress 'Enter' to continue.")
+        self.main_menu()
+
+    def voice_launcher(self):
+        """
+        Takes user input and runs it through a string-file association service to determine the most appropriate
+        file to match the input string. It then launches this file.
+        """
+
+        os.system(clear_cmd)
+        self.update_file_list()
+        input("\nPress 'Enter' to begin recording your voice command.")
+        my_string = voice_string()
         self.string_to_file_launch(my_string)
         input("\nPress 'Enter' to continue.")
         self.main_menu()
@@ -387,6 +412,15 @@ def help_me(chapter: int):
             "input, one of them will be randomly selected. In the event that your text doesn't have a match, \n" \
             "the program will let you know and return a list of the available files to launch to help you tailor \n" \
             "a more relevant input for the next attempt.\n" \
+            "\nVOICE COMMAND: This feature is pretty nifty. So long as your operating system’s default microphone \n" \
+            "is working and you have an internet connection, this will record a voice sample, then send it to \n" \
+            "Google’s Speech Recognition service for analysis. Assuming it is legible, your voice sample will be \n" \
+            "converted to text and used to launch a file in the launch folder that matches up with the text \n" \
+            "detected in your speech pattern. When you select this option, you will initially be prompted to hit \n" \
+            "‘Enter’ to start recording your voice sample. The speech recognition service will print out some \n" \
+            "summary information to show how it attempted to recognize the voice sample.  If it was successful, \n" \
+            "it will display the matching file found and launch it for you. You may hit ‘Enter’ again to return \n" \
+            "to the main menu afterwards.\n" \
             "\nSURPRISE: Can’t decide on what game to play, or what music to listen to? Use the surprise feature \n" \
             "to have a random-selection microservice automatically choose one for you! As long is there is at \n" \
             "least one file available in the current launch folder, this should work every time \n" \
@@ -429,6 +463,26 @@ def help_me(chapter: int):
         print(intro)
     elif chapter == 1:
         print(settings)
+
+
+def voice_string():
+    """Uses speech recognition to convert a voice sample into a string. Returns the string."""
+
+    # Define speech recognizer, record sample, and send to google for conversion to string
+    recognizer = speech_recognition.Recognizer()
+    try:
+        with speech_recognition.Microphone() as source:
+            print("Voice sampling started...")
+            voice_sample = recognizer.listen(source, timeout=10, phrase_time_limit=10)
+            print("Analyzing voice sample with Google Speech Recognition...")
+            text = recognizer.recognize_google(voice_sample)
+            return text
+    except speech_recognition.UnknownValueError:
+        print("Your audio sample was incomprehensible. Please try again.")
+        return ""
+    except speech_recognition.RequestError:
+        print("There was an issue requesting results from Google. Please check your connection or try again later.")
+        return ""
 
 
 # START PROGRAM: Generate a blank dictionary file if necessary

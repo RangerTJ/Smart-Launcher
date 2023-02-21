@@ -217,6 +217,9 @@ def error_check_request(request_dict):
     elif isinstance(request_dict["strings"], list) is False or isinstance(request_dict["files"], list) is False:
         print("Error: Request keys did not have arrays as values.")
         return True
+    elif request_dict["strings"] is None or request_dict["files"] is None:
+        print("Error: Keys cannot have 'none' types as values. Values must be an array")
+        return True
     else:
         print("Request validated.")
         return False
