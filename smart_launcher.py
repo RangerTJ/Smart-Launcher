@@ -119,7 +119,10 @@ class WordFileTool:
 
         os.system(clear_cmd)
         self.update_file_list()
-        input("\nPress 'Enter' to begin recording your voice command.")
+        input("\nPress 'Enter' to begin recording your voice command.\n"
+              "Note: Background noise may prevent the phrase recorder from stopping when you\n"
+              "are done speaking. If this happens, just remain quiet after your phrase and wait\n"
+              "for the 6-second time-out to complete.")
         my_string = voice_string()
         self.string_to_file_launch(my_string)
         input("\nPress 'Enter' to continue.")
@@ -472,8 +475,8 @@ def voice_string():
     recognizer = speech_recognition.Recognizer()
     try:
         with speech_recognition.Microphone() as source:
-            print("Voice sampling started...")
-            voice_sample = recognizer.listen(source, timeout=10, phrase_time_limit=10)
+            print("Voice sampling started... Sampling will stop after 6 seconds.")
+            voice_sample = recognizer.listen(source, timeout=6, phrase_time_limit=6)
             print("Analyzing voice sample with Google Speech Recognition...")
             text = recognizer.recognize_google(voice_sample)
             return text
