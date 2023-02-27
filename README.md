@@ -8,7 +8,7 @@ Requires locally-operated microservices on ports 5555 (smart_selector.py) and 55
 # Smart Selector - Microservice Instructions and Communication Contract
 Requires Python 3.10 and installing the zmq module.  
 
-The microservice portion of this project is designed to be a flexible way for client programs to quickly associate one of the files available to their program with a string. The intention is that this can be used to quickly and dynamically generate content where you may have a large library of files available, and you do not want to manually assign an file in an accompanying space every time. To start using the microservice, open a command-line terminal, navigate to the folder containing the microserverice, and run microservice_server.py. It will actively listen for requests and respond to them until the program is stopped (in software like PyCharm you may need to hit the "stop" button twice to fully halt the program) or the terminal window is closed. In the event the socket is left open for some reason (which, on Windows, tends to happen if you try to run the script directly from a window), pull up your computer's task manager and look for a python.exe process to terminate (under task manager "details" tab in Windows 10).  
+The microservice portion of this project is designed to be a flexible way for client programs to quickly associate one of the files available to their program with a string. The intention is that this can be used to quickly and dynamically generate content where you may have a large library of files available, and you do not want to manually assign an file in an accompanying space every time. To start using the microservice, open a command-line terminal, navigate to the folder containing the microserverice, and run smart_selector.py. It will actively listen for requests and respond to them until the program is stopped (in software like PyCharm you may need to hit the "stop" button twice to fully halt the program) or the terminal window is closed. In the event the socket is left open for some reason (which, on Windows, tends to happen if you try to run the script directly from a window), pull up your computer's task manager and look for a python.exe process to terminate (under task manager "details" tab in Windows 10).  
 
 To achieve this, the service uses socekts via ZeroMQ (https://zeromq.org/get-started/). JSON-formatted infromation is sent form a requesting client to the microservice, which acts as a server, listening in the socket's port for a request. Once the request is recieved, it runs a process to associate the strings in the request to one of the filepaths in the request and it sends back the association to the requesting client via port 5555.  
 
@@ -30,6 +30,7 @@ If a request is invalid (wrong request format or there are no requested strings)
 ![Client_example_output_alt](https://user-images.githubusercontent.com/87739732/218598636-1697d6bc-71f5-4adb-9c86-92bc04a80d24.JPG)  
   
 **Diagram of Client-Microservice Interaction**  
-![microUMLNewName](https://user-images.githubusercontent.com/87739732/217414999-c40c4227-807c-47ef-a3c4-c5b43f6efeb1.JPG)
+![microUMLNewNewName](https://user-images.githubusercontent.com/87739732/221490157-c0f3c5f3-6f25-4667-a291-106e46ed0f86.png)
+
 
 
