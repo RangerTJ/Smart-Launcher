@@ -1,6 +1,6 @@
 """
 Author: Taylor Jordan
-GitHub username: Raptor2k1
+GitHub username: RangerTJ
 Date: 2/13/2023
 
 Description:    This service is designed to work as part of a microservice architecture. Its role is using sockets
