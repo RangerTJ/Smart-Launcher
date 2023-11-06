@@ -1,6 +1,6 @@
 """
 Author: Taylor Jordan
-GitHub username: Raptor2k1
+GitHub username: RangerTJ
 Date: 2/21/2023
 
 Description:    Launches files or folders contained within a target directory based on input strings, or randomly by
